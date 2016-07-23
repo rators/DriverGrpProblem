@@ -17,6 +17,7 @@ object LCS extends App {
     */
   case class LCSData(length: Int, direction: Position) extends UnionRes
   case class StrResult(s: String) extends UnionRes
+
   /**
     * A naive solution to the longest common overlapping substring problem.
     * NOTE: both are assumed to be of the same length

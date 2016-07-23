@@ -7,6 +7,15 @@ case object Prefix extends Position
 case object Suffix extends Position
 
 object Position extends App {
+  /**
+    * Get the overlap of information of two strings.
+    * @param strOne
+    *               The first string.
+    * @param strTwo
+    *               The second string.
+    * @return
+    *         Overlap information of two strings.
+    */
   def getOverlap(strOne: String, strTwo: String): UnionRes = {
     //assume they are of the same length
     val areEqual = strOne == strTwo
@@ -22,6 +31,15 @@ object Position extends App {
     }
   }
 
+  /**
+    * Condition for two strings with different lengths.
+    * @param strOne
+    *               The first string.
+    * @param strTwo
+    *               The second string.
+    * @return
+    *         The overlapping string information.
+    */
   def handleSizeDiff(strOne: String, strTwo: String): UnionRes = {
     val bigStr = maxString(strOne, strTwo)
     val minStr = minString(strOne, strTwo)
@@ -31,8 +49,8 @@ object Position extends App {
     isConsumed match {
       case true => StrResult(bigStr)
       case false =>
-        val firstAsPrefix = slide(strOne, strTwo, Prefix)
-        val secondAsPrefix = slide(strOne, strTwo, Suffix)
+        val firstAsPrefix = getLCSDiff(strOne, strTwo, Prefix)
+        val secondAsPrefix = getLCSDiff(strOne, strTwo, Suffix)
         (firstAsPrefix, secondAsPrefix) match {
           case (Some(firstStr), Some(secondStr)) =>
             val firstLarger = firstStr.length > secondStr.length
@@ -46,7 +64,20 @@ object Position extends App {
     }
   }
 
-  def slide(strTop: String, strBottom: String, topPosition: utils.Position): Option[String] = {
+  /**
+    * Get the shortest common substring of two strings with strTop as the prefix or suffix of the resulting string.
+    * Use this function if the strings are of a different length.
+    * @param strTop
+    *               The top string.
+    * @param strBottom
+    *                  The bottom string.
+    * @param topPosition
+    *                    The position in the resulting string strTop will be at.
+    * @return
+    *         An optional of the longest common substring of strTop and strBottom.
+    *
+    */
+  def getLCSDiff(strTop: String, strBottom: String, topPosition: utils.Position): Option[String] = {
     val rightIndices = strBottom.length to 1 by -1
 
     val topDrop = topPosition match {
@@ -104,5 +135,5 @@ object Position extends App {
     LCSData(overlapLength, direction)
   }
 
-  println(slide("ACGTA", "CACG", Suffix))
+  println(getLCSDiff("ACGTA", "CACG", Suffix))
 }
