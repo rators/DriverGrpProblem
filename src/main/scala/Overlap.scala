@@ -1,6 +1,6 @@
 import utils.LCS._
 import utils._
-import utils.Edge._
+import utils.Link._
 import utils.Node.toEdges
 
 import scala.collection.mutable
@@ -16,11 +16,11 @@ object Overlap extends App {
 
   val nodes: mutable.Buffer[Node] = sampleInput.map((inputFrag) => Node(inputFrag, None)).toBuffer
 
-  val edges = toEdges(nodes)
+  val links = toEdges(nodes)
 
-  linkEdges(edges)
-  println(edges)
-  val result = reduceEdges(edges)
+  connectLinks(links)
+  println(links)
+  val result = reduceLinks(links)
 
   val startIndices = sampleInput.map(result.indexOf)
   val isNotSuperSequence = startIndices.exists(_ < 0)

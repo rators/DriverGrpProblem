@@ -6,72 +6,72 @@ import utils.Position.{getOverlap, maxString, minString}
 import scala.collection.mutable
 
 /**
-  * An implementation of a graph edge.
+  * An implementation of a link.
   *
-  * @param start
+  * @param source
   * The source node.
-  * @param end
+  * @param destination
   * The destination node if any.
-  * @param weight
+  * @param value
   * The amount of overlap between the strand string values of the start and end nodes.
   * @param id
   * An ID for debugging purposes.
   */
-case class Edge(start: Node, var end: Option[Node], var weight: Int = -1, id: Int = Random.nextInt(9999)) {
-  override def toString = s"[$id] ${start.strand} --> ${end.getOrElse("_")} By: $weight"
+case class Link(source: Node, var destination: Option[Node], var value: Int = -1, id: Int = Random.nextInt(9999)) {
+  override def toString = s"[$id] ${source.strand} --> ${destination.getOrElse("_")} By: $value"
 }
 
 
-object Edge {
+object Link {
   /**
-    * Obtains the end node if any for a buffer of edges.
+    * Obtains the end node if any for a buffer of links.
     *
-    * @param edges
-    * An unlinked list of edges.
+    * @param links
+    * An unlinked list of links.
     */
-  def linkEdges(edges: mutable.Buffer[Edge]): Unit = {
-    println(s"The edges: $edges")
+  def connectLinks(links: mutable.Buffer[Link]): Unit = {
+    println(s"The links: $links")
 
     val atLeastHalf = (targetStr: String, overlap: Int) =>
       overlap >= targetStr.length / 2d
 
-    val isHalfChild = (parent: Edge, candidate: Edge) => {
-      val overlapResult = getOverlap(parent.start.strand, candidate.start.strand)
+    val isHalfChild = (parent: Link, candidate: Link) => {
+      val overlapResult = getOverlap(parent.source.strand, candidate.source.strand)
       overlapResult match {
         case overlapData: LCSData =>
-          val isHalfOverlap = atLeastHalf(parent.start.strand, overlapData.length)
+          val isHalfOverlap = atLeastHalf(parent.source.strand, overlapData.length)
           val isChild = overlapData.direction == Prefix
           val result = isChild && isHalfOverlap
           if (result) Some(overlapData.length) else None
         case s: StrResult =>
 
           val parentLarger = maxString(
-            parent.start.strand,
-            candidate.start.strand
-          ) == parent.start.strand
+            parent.source.strand,
+            candidate.source.strand
+          ) == parent.source.strand
           parentLarger match {
             case true =>
-              edges -= parent
+              links -= parent
               None
             case false =>
-              edges -= candidate
+              links -= candidate
               None
           }
       }
 
     }
 
-    edges.foreach((e) => {
-      val matchingNodeOpt = edges
+    links.foreach((e) => {
+      val matchingNodeOpt = links
         .filterNot(_ == e)
         .collectFirst {
-          case r if isHalfChild(e, r).isDefined => (r.start, isHalfChild(e, r).get)
+          case r if isHalfChild(e, r).isDefined => (r.source, isHalfChild(e, r).get)
         }
 
       matchingNodeOpt match {
         case Some(nodeTuple) =>
-          e.end = Some(nodeTuple._1)
-          e.weight = nodeTuple._2
+          e.destination = Some(nodeTuple._1)
+          e.value = nodeTuple._2
         case None => //throw new AssertionError(s"No matching node found for: ${e.start}")
       }
     })

@@ -51,11 +51,11 @@ object LCS extends App {
     * @return
     * The assembled string AKA the shortest common super-sequence.
     */
-  def reduceEdges(edges: mutable.Buffer[Edge]): String = {
+  def reduceLinks(edges: mutable.Buffer[Link]): String = {
 
     while (edges.length > 1) {
       val left = edges.head
-      left.end match {
+      left.destination match {
         case Some(endNode) =>
           collapseEdges(left, endNode, edges)
         case None =>
@@ -64,7 +64,7 @@ object LCS extends App {
       }
     }
 
-    val result = edges.head.start.strand
+    val result = edges.head.source.strand
     result
   }
 
@@ -78,22 +78,22 @@ object LCS extends App {
     * @param aggregate
     * The edges associated with the graph.
     */
-  def collapseEdges(currentEdge: Edge, end: Node, aggregate: mutable.Buffer[Edge]) = {
-    val strOne = currentEdge.start.strand // the start node (prefix)
+  def collapseEdges(currentEdge: Link, end: Node, aggregate: mutable.Buffer[Link]) = {
+    val strOne = currentEdge.source.strand // the start node (prefix)
     val strTwo = end.strand // the end node (suffix)
 
     val foldInto = currentEdge
-      .end.get
+      .destination.get
       .starterEdge.get // get the child node's edge
 
     aggregate -= currentEdge // remove this edge from the list
 
-    val mergeString = merge(strOne, strTwo, currentEdge.weight) // create the shortest common super-string
+    val mergeString = merge(strOne, strTwo, currentEdge.value) // create the shortest common super-string
 
-    currentEdge.start.strand = mergeString // change the string values for the parent edge's end and the child's node's start
+    currentEdge.source.strand = mergeString // change the string values for the parent edge's end and the child's node's start
 
-    foldInto.start.strand = mergeString
-    currentEdge.start.starterEdge = Some(foldInto)
+    foldInto.source.strand = mergeString
+    currentEdge.source.starterEdge = Some(foldInto)
   }
 
 
