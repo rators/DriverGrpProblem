@@ -29,7 +29,7 @@ Create a list of links with `source` and `destination` nodes.
 **Link directions represent the following**
 
 - `source`: *prefix* of the **SCS** with `destination`
-- `destination`: *suffix* of the **SCS** with `destination`
+- `destination`: *suffix* of the **SCS** with `source`
  
 Link length values are equal to the length of the longest common overlapping sub-string of the **source** and **destination** nodes in the link using `getOverlap`.
 
